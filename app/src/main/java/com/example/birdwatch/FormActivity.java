@@ -1,9 +1,10 @@
 package com.example.birdwatch;
 
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -15,18 +16,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -40,15 +32,22 @@ public class FormActivity extends AppCompatActivity
     @InjectView(R.id.inputName) EditText inputName;
     @InjectView(R.id.inputNote) EditText inputNote;
 
-    ArrayList<HashMap<String,String>> birdLists;
+    SharedPreferences settings;
+
+    public static final String mySavings = "mySave";
+    public static final String Id = "ID:";
+    public static final String Name = "Name:";
+    public static final String Rarity = "Rarity:";
+    public static final String Note = "Note:";
+    public static final String Date = "Date:";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
         ButterKnife.inject(this);
-
-        birdLists = new ArrayList<>();
 
         addListenerOnSpinnerItemSelection();
         cancelForm();
@@ -82,47 +81,9 @@ public class FormActivity extends AppCompatActivity
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                birdLists = new ArrayList<>();
-                int count = 0;
-                try {
-                    boolean isFilePresent = isFilePresent(getApplicationContext(), "storage.txt");
-                    if(isFilePresent) {
-                        String jsonString = read(getApplicationContext(), "storage.txt");
-                        //do the json parsing here and do the rest of functionality of app
-                        JSONArray jsonArray = new JSONArray(jsonString);
-                        count = jsonArray.length()+1;
 
-                    } else {
-                        count++;
-                    }
-                    // temporary hashmap for single bird
-                    HashMap<String, String> bird = new HashMap<>();
-                    bird.put("Id: ", Integer.toString(count));
-                    bird.put("Name: ", name);
-                    bird.put("Rarity: ", rarity);
-                    bird.put("Note: ", note);
-                    bird.put("Date: ", date);
-
-                    birdLists.add(bird);
-
-                    boolean isFileCreated = create(getApplicationContext(), "storage.txt", birdLists.toString());
-                    if(isFileCreated) {
-                        //proceed with storing
-                        Toast.makeText(getApplicationContext(),"Created Successfully!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        //show error or try again.
-                    }
-
-                }
-                catch (JSONException e) {
-                    Log.d("JSONException: ", e.toString());
-                    e.printStackTrace();
-                }
             }
         });
-
-
-
     }
 
     // Clear and reset form when clicked
@@ -138,46 +99,48 @@ public class FormActivity extends AppCompatActivity
         });
     }
 
-    ////
-    private String read(Context context, String fileName) {
+
+    public void putJson(Context context, JSONObject jsonObject) {
+        SharedPreferences.Editor editor;
+
+        settings = context.getSharedPreferences(mySavings,
+                Context.MODE_PRIVATE);
+        editor = settings.edit();
+
+        editor.putString("JSONString", jsonObject.toString());
+
+        editor.commit();
+    }
+
+    public ArrayList<Bird> getJson(Context context, String category) {
+        String json;
+        JSONArray jPdtArray;
+        Bird bird = null;
+        ArrayList<Bird> birds = null;
+
+        settings = context.getSharedPreferences(mySavings,
+                Context.MODE_PRIVATE);
+        json = settings.getString("JSONString", null);
+
+        JSONObject jsonObj = null;
         try {
-            FileInputStream fis = context.openFileInput(fileName);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
+            if (json != null) {
+                jsonObj = new JSONObject(json);
+                jPdtArray = jsonObj.optJSONArray(category);
+                if (jPdtArray != null) {
+                    birds = new ArrayList<Bird>();
+                    for (int i = 0; i < jPdtArray.length(); i++) {
+                        bird = new Bird();
+                        JSONObject pdtObj = jPdtArray.getJSONObject(i);
+                        bird.setName(pdtObj.getString("name"));
+                        bird.setId(pdtObj.getString("id"));
+                        birds.add(bird);
+                    }
+                }
             }
-            return sb.toString();
-        } catch (FileNotFoundException fileNotFound) {
-            return null;
-        } catch (IOException ioException) {
-            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        return birds;
     }
-
-    private boolean create(Context context, String fileName, String jsonString){
-        try {
-            FileOutputStream fos = context.openFileOutput(fileName,Context.MODE_PRIVATE);
-            if (jsonString != null) {
-                fos.write(jsonString.getBytes());
-            }
-            fos.close();
-            return true;
-        } catch (FileNotFoundException fileNotFound) {
-            return false;
-        } catch (IOException ioException) {
-            return false;
-        }
-
-    }
-
-    public boolean isFilePresent(Context context, String fileName) {
-        String path = context.getFilesDir().getAbsolutePath() + "/" + fileName;
-        File file = new File(path);
-        return file.exists();
-    }
-
-
 }
