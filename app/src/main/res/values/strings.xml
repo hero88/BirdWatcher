@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">BirdWatch</string>
+    <string name="btnAdd">Add More</string>
+    <string name="btnCreate">Create</string>
+    <string name="btnCancel">Clear</string>
+    <string name="name">Bird Name</string>
+    <string name="note">Note</string>
+    <string name="rarity">Rarity</string>
+    <string name="date">Date</string>
+
+    <string name="test">Test</string>
+
+    <string name="rarityPrompt">Choose a rarity</string>
+    <string-array name="rarity">
+        <item>Common</item>
+        <item>Rare</item>
+        <item>Extremely Rare</item>
+    </string-array>
+
+</resources>
