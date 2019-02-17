@@ -3,14 +3,18 @@ package com.example.birdwatch;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +36,8 @@ public class FormActivity extends AppCompatActivity
     @InjectView(R.id.inputName) EditText inputName;
     @InjectView(R.id.inputNote) EditText inputNote;
 
+    Gson gson = new Gson();
+
     SharedPreferences settings;
 
     public static final String mySavings = "mySave";
@@ -40,6 +46,8 @@ public class FormActivity extends AppCompatActivity
     public static final String Rarity = "Rarity:";
     public static final String Note = "Note:";
     public static final String Date = "Date:";
+
+    public static int count = 0;
 
 
 
@@ -73,15 +81,25 @@ public class FormActivity extends AppCompatActivity
 
     // create new bird observation when clicked
     public void createForm(){
-        final String name = inputName.getText().toString();
-        final String note = inputNote.getText().toString();
         final String rarity = String.valueOf(spinner1.getSelectedItem());
-        final String date = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(Calendar.getInstance().getTime());
+        final String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = inputName.getText().toString();
+                String note = inputNote.getText().toString();
 
+                settings = getSharedPreferences(mySavings, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+
+                editor.putString(Id, "1");
+                editor.putString(Name, name);
+                editor.putString(Note, note);
+                editor.putString(Rarity, rarity);
+                editor.putString(Date, date);
+
+                editor.commit();
             }
         });
     }
@@ -106,20 +124,17 @@ public class FormActivity extends AppCompatActivity
         settings = context.getSharedPreferences(mySavings,
                 Context.MODE_PRIVATE);
         editor = settings.edit();
-
-        editor.putString("JSONString", jsonObject.toString());
-
+        editor.putString(Id, jsonObject.toString());
         editor.commit();
     }
 
     public ArrayList<Bird> getJson(Context context, String category) {
         String json;
         JSONArray jPdtArray;
-        Bird bird = null;
+        Bird bird;
         ArrayList<Bird> birds = null;
 
-        settings = context.getSharedPreferences(mySavings,
-                Context.MODE_PRIVATE);
+        settings = context.getSharedPreferences(mySavings, Context.MODE_PRIVATE);
         json = settings.getString("JSONString", null);
 
         JSONObject jsonObj = null;

@@ -55,6 +55,7 @@
 
         <TableRow>
             <TextView
+                android:id="@+id/text_view_idName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/test"
@@ -65,6 +66,7 @@
                 android:layout_marginHorizontal="1dp"/>
 
             <TextView
+                android:id="@+id/text_view_idRarity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/test"
@@ -75,6 +77,7 @@
                 android:layout_marginBottom="1dp"/>
 
             <TextView
+                android:id="@+id/text_view_idNote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/test"
@@ -85,6 +88,7 @@
                 android:layout_marginBottom="1dp"/>
 
             <TextView
+                android:id="@+id/text_view_idDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/test"
