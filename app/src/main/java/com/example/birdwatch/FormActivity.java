@@ -36,12 +36,11 @@ public class FormActivity extends AppCompatActivity
     @InjectView(R.id.inputName) EditText inputName;
     @InjectView(R.id.inputNote) EditText inputNote;
 
-    Gson gson = new Gson();
 
     SharedPreferences settings;
 
     public static final String mySavings = "mySave";
-    public static final String Id = "ID:";
+    public static final String Bird = "Bird:";
     public static final String Name = "Name:";
     public static final String Rarity = "Rarity:";
     public static final String Note = "Note:";
@@ -49,7 +48,8 @@ public class FormActivity extends AppCompatActivity
 
     public static int count = 0;
 
-
+    Bird bird = new Bird();
+    JSONObject jsonObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,6 @@ public class FormActivity extends AppCompatActivity
 
     // create new bird observation when clicked
     public void createForm(){
-        final String rarity = String.valueOf(spinner1.getSelectedItem());
         final String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 
         btnCreate.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +88,30 @@ public class FormActivity extends AppCompatActivity
             public void onClick(View v) {
                 String name = inputName.getText().toString();
                 String note = inputNote.getText().toString();
+                String rarity = String.valueOf(spinner1.getSelectedItem());
 
+                bird.setName(name);
+                bird.setRarity(rarity);
+                bird.setNote(note);
+                bird.setDate(date);
+
+                if (jsonObject == null) {
+                    bird.setId(1);
+                }
+                else {
+                    bird.setId(jsonObject.length()+1);
+                }
+
+                String jsonString = bird.toString();
+                try {
+                    jsonObject = new JSONObject(jsonString);
+                    putJson(getApplicationContext(), jsonObject);
+                    Log.d("test:", jsonString);
+                    Log.d("Another:", jsonObject.toString());
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                /*
                 settings = getSharedPreferences(mySavings, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
 
@@ -100,6 +122,7 @@ public class FormActivity extends AppCompatActivity
                 editor.putString(Date, date);
 
                 editor.commit();
+                */
             }
         });
     }
@@ -124,7 +147,7 @@ public class FormActivity extends AppCompatActivity
         settings = context.getSharedPreferences(mySavings,
                 Context.MODE_PRIVATE);
         editor = settings.edit();
-        editor.putString(Id, jsonObject.toString());
+        editor.putString("", jsonObject.toString());
         editor.commit();
     }
 
@@ -148,7 +171,7 @@ public class FormActivity extends AppCompatActivity
                         bird = new Bird();
                         JSONObject pdtObj = jPdtArray.getJSONObject(i);
                         bird.setName(pdtObj.getString("name"));
-                        bird.setId(pdtObj.getString("id"));
+                        bird.setId(pdtObj.getInt("id"));
                         birds.add(bird);
                     }
                 }
