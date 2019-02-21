@@ -3,7 +3,6 @@ package com.example.birdwatch;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,13 +15,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -36,26 +33,17 @@ public class FormActivity extends AppCompatActivity
     @InjectView(R.id.inputName) EditText inputName;
     @InjectView(R.id.inputNote) EditText inputNote;
 
-
-    SharedPreferences settings;
-
     public static final String mySavings = "mySave";
     public static final String Bird = "Bird:";
-    public static final String Name = "Name:";
-    public static final String Rarity = "Rarity:";
-    public static final String Note = "Note:";
-    public static final String Date = "Date:";
 
-    public static int count = 0;
-
-    Bird bird = new Bird();
-    JSONObject jsonObject;
+    Gson gson = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
         ButterKnife.inject(this);
+
 
         addListenerOnSpinnerItemSelection();
         cancelForm();
@@ -81,48 +69,42 @@ public class FormActivity extends AppCompatActivity
 
     // create new bird observation when clicked
     public void createForm(){
-        final String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 
         btnCreate.setOnClickListener(new View.OnClickListener() {
+            Bird bird = new Bird();
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
+                String oldData, newData, currentData;
                 String name = inputName.getText().toString();
                 String note = inputNote.getText().toString();
                 String rarity = String.valueOf(spinner1.getSelectedItem());
+                String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 
                 bird.setName(name);
-                bird.setRarity(rarity);
                 bird.setNote(note);
+                bird.setRarity(rarity);
                 bird.setDate(date);
 
-                if (jsonObject == null) {
-                    bird.setId(1);
+                List<Bird> oldList = getData(getApplicationContext());
+                if (oldList == null) {
+                    bird.setId(0);
                 }
-                else {
-                    bird.setId(jsonObject.length()+1);
+                else{
+                    oldData = gson.toJson(oldList);
+                    Log.d("old data:", oldData);
+                    bird.setId(oldList.size()+1);
+
+                    List<Bird> newList = new ArrayList<Bird>();
+                    newList.add(bird);
+                    newData = gson.toJson(newList);
+                    Log.d("new data:", newData);
+
+                    currentData = oldData + newData;
+                    Log.d("current data:", currentData);
                 }
-
-                String jsonString = bird.toString();
-                try {
-                    jsonObject = new JSONObject(jsonString);
-                    putJson(getApplicationContext(), jsonObject);
-                    Log.d("test:", jsonString);
-                    Log.d("Another:", jsonObject.toString());
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                /*
-                settings = getSharedPreferences(mySavings, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = settings.edit();
-
-                editor.putString(Id, "1");
-                editor.putString(Name, name);
-                editor.putString(Note, note);
-                editor.putString(Rarity, rarity);
-                editor.putString(Date, date);
-
-                editor.commit();
-                */
+                oldList.add(bird);
+                saveData(getApplicationContext(), oldList);
             }
         });
     }
@@ -141,44 +123,31 @@ public class FormActivity extends AppCompatActivity
     }
 
 
-    public void putJson(Context context, JSONObject jsonObject) {
+    public void saveData(Context context, List<Bird> list) {
+        SharedPreferences settings;
         SharedPreferences.Editor editor;
-
         settings = context.getSharedPreferences(mySavings,
                 Context.MODE_PRIVATE);
         editor = settings.edit();
-        editor.putString("", jsonObject.toString());
+        String jsonData = gson.toJson(list);
+        editor.putString(Bird, jsonData);
         editor.commit();
     }
 
-    public ArrayList<Bird> getJson(Context context, String category) {
-        String json;
-        JSONArray jPdtArray;
-        Bird bird;
-        ArrayList<Bird> birds = null;
+    public ArrayList<Bird> getData(Context context){
+        SharedPreferences settings;
+        settings = context.getSharedPreferences(mySavings,Context.MODE_PRIVATE);
+        List <Bird> birdLists;
 
-        settings = context.getSharedPreferences(mySavings, Context.MODE_PRIVATE);
-        json = settings.getString("JSONString", null);
+        if (settings.contains(Bird)) {
+            String jsonData = settings.getString(Bird,null);
+            Bird[] bird = gson.fromJson(jsonData, Bird[].class);
 
-        JSONObject jsonObj = null;
-        try {
-            if (json != null) {
-                jsonObj = new JSONObject(json);
-                jPdtArray = jsonObj.optJSONArray(category);
-                if (jPdtArray != null) {
-                    birds = new ArrayList<Bird>();
-                    for (int i = 0; i < jPdtArray.length(); i++) {
-                        bird = new Bird();
-                        JSONObject pdtObj = jPdtArray.getJSONObject(i);
-                        bird.setName(pdtObj.getString("name"));
-                        bird.setId(pdtObj.getInt("id"));
-                        birds.add(bird);
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            birdLists = Arrays.asList(bird);
+            birdLists = new ArrayList<Bird>(birdLists);
         }
-        return birds;
+        else
+            return null;
+        return (ArrayList<Bird>)birdLists;
     }
 }

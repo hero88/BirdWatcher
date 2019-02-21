@@ -1,59 +1,54 @@
 package com.example.birdwatch;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Bird {
-    private int id;
-    private String name;
-    private String note;
-    private String rarity;
-    private String date;
+    @SerializedName("id")
+    private int mId;
+    @SerializedName("name")
+    private String mName;
+    @SerializedName("note")
+    private String mNote;
+    @SerializedName("rarity")
+    private String mRarity;
+    @SerializedName("date")
+    private String mDate;
 
     public Bird(int i, String nam, String not, String rar, String dat){
-        super();
-        this.id = i;
-        this.name = nam;
-        this.note = not;
-        this.rarity = rar;
-        this.date = dat;
+        mId = i;
+        mName = nam;
+        mNote = not;
+        mRarity = rar;
+        mDate = dat;
     }
 
     public Bird () { super(); }
 
     // getter functions
-    public String getName()     { return name; }
-    public String getNote()     { return note; }
-    public String getRarity()   { return rarity; }
-    public String getDate()     { return date; }
-    public int getId()          { return id; }
+    public int getId()          { return mId;   }
+    public String getName()     { return mName; }
+    public String getNote()     { return mNote; }
+    public String getRarity()   { return mRarity; }
+    public String getDate()     { return mDate; }
+
 
     // setter functions
-    public void setId(int id)               {      this.id = id;     }
-    public void setDate(String date)        {      this.date = date;    }
-    public void setName(String name)        {      this.name = name;    }
-    public void setNote(String note)        {      this.note = note;    }
-    public void setRarity(String rarity)    {      this.rarity = rarity;    }
+    public void setId(int id)               {      this.mId = id;           }
+    public void setDate(String date)        {      this.mDate = date;       }
+    public void setName(String name)        {      this.mName = name;       }
+    public void setNote(String note)        {      this.mNote = note;       }
+    public void setRarity(String rarity)    {      this.mRarity = rarity;   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Bird other = (Bird) obj;
-        if (id != other.id)
-            return false;
-        return true;
-    }
-
+    /*
     @Override
     public String toString(){
-        return "{\"birds\": [{\"id\": \"" + id +
-                "\", \"name\" : \"" + name +
-                "\", \"rarity\" : \"" + rarity +
-                "\", \"note\" : \"" + note +
-                "\", \"date\" : \"" + date +
+        return "{\"Birds\": [{\"id\": \"" + id +
+                "\", \"Name\" : \"" + mName +
+                "\", \"Rarity\" : \"" + mRarity +
+                "\", \"Note\" : \"" + mNote +
+                "\", \"Date\" : \"" + mDate +
                 "\"}]" +
                 "}";
     }
+    */
 }
