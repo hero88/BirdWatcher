@@ -69,7 +69,7 @@ public class listViewAdapter extends BaseAdapter {
             holder.txtSecond =  convertView.findViewById(R.id.Rarity);
             holder.txtThird = convertView.findViewById(R.id.Note);
             holder.txtFourth = convertView.findViewById(R.id.Date);
-            //holder.txtFifth = convertView.findViewById(R.id.Location);
+            holder.txtFifth = convertView.findViewById(R.id.Location);
             convertView.setTag(holder);
         }
         else
@@ -83,7 +83,7 @@ public class listViewAdapter extends BaseAdapter {
         holder.txtSecond.setText(map.get(SECOND_COLUMN).toString());
         holder.txtThird.setText(map.get(THIRD_COLUMN).toString());
         holder.txtFourth.setText(map.get(FOURTH_COLUMN).toString());
-        //holder.txtFifth.setText(map.get(FIFTH_COLUMN).toString());
+        holder.txtFifth.setText(map.get(FIFTH_COLUMN).toString());
 
         return convertView;
     }

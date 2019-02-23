@@ -1,6 +1,6 @@
 package com.example.birdwatch;
 
-//import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
 public class Bird {
@@ -34,18 +34,6 @@ public class Bird {
     public void setName(String name)            {   this.mName = name;       }
     public void setNote(String note)            {   this.mNote = note;       }
     public void setRarity(String rarity)        {   this.mRarity = rarity;   }
-    //public void setLocation(LatLng location)    {   this.mLocation= location.toString();}
+    public void setLocation(LatLng location)    {   this.mLocation= location.toString();}
 
-    /*
-    @Override
-    public String toString(){
-        return "{\"Birds\": [{\"id\": \"" + id +
-                "\", \"Name\" : \"" + mName +
-                "\", \"Rarity\" : \"" + mRarity +
-                "\", \"Note\" : \"" + mNote +
-                "\", \"Date\" : \"" + mDate +
-                "\"}]" +
-                "}";
-    }
-    */
 }

@@ -75,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
             }catch (ParseException e){
                 e.printStackTrace();
             }
+            if (birdList.get(i).getLocation()!=null)
+                temp.put(FIFTH_COLUMN, birdList.get(i).getLocation());
+            else
+                temp.put(FIFTH_COLUMN, "None");
             list.add(temp);
         }
 
