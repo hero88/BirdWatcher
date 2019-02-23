@@ -1,8 +1,15 @@
 package com.example.birdwatch;
 
 
+//import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+//import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
@@ -36,7 +44,10 @@ public class FormActivity extends AppCompatActivity
     public static final String mySavings = "mySave";
     public static final String Bird = "Bird:";
 
+    //private LocationManager locationManager;
+    //private String provider;
     Gson gson = new Gson();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,27 +79,35 @@ public class FormActivity extends AppCompatActivity
     }
 
     // create new bird observation when clicked
-    public void createForm(){
-
-        btnCreate.setOnClickListener(new View.OnClickListener() {
+    public void createForm()
+    {
+        btnCreate.setOnClickListener(new View.OnClickListener()
+        {
             Bird bird = new Bird();
             @Override
             public void onClick(View v)
             {
                 String oldData, newData, currentData;
+                //Double lat,lng;
+
                 String name = inputName.getText().toString();
                 String note = inputNote.getText().toString();
                 String rarity = String.valueOf(spinner1.getSelectedItem());
                 String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 
+                //lat = location.getLatitude();
+                //lng = location.getLongitude();
+                //LatLng myPosition = new LatLng(50.0,60.0);
+
                 bird.setName(name);
                 bird.setNote(note);
                 bird.setRarity(rarity);
                 bird.setDate(date);
+                //bird.setLocation(myPosition);
 
                 List<Bird> oldList = getData(getApplicationContext());
                 if (oldList == null) {
-                    bird.setId(0);
+                    bird.setId(1);
                 }
                 else{
                     oldData = gson.toJson(oldList);
@@ -147,7 +166,7 @@ public class FormActivity extends AppCompatActivity
             birdLists = new ArrayList<Bird>(birdLists);
         }
         else
-            return null;
+            return new ArrayList<Bird>();
         return (ArrayList<Bird>)birdLists;
     }
 }

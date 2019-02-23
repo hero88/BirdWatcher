@@ -1,5 +1,6 @@
 package com.example.birdwatch;
 
+//import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
 public class Bird {
@@ -13,14 +14,8 @@ public class Bird {
     private String mRarity;
     @SerializedName("date")
     private String mDate;
-
-    public Bird(int i, String nam, String not, String rar, String dat){
-        mId = i;
-        mName = nam;
-        mNote = not;
-        mRarity = rar;
-        mDate = dat;
-    }
+    @SerializedName("location")
+    private String mLocation;
 
     public Bird () { super(); }
 
@@ -30,14 +25,16 @@ public class Bird {
     public String getNote()     { return mNote; }
     public String getRarity()   { return mRarity; }
     public String getDate()     { return mDate; }
+    public String getLocation() { return mLocation;}
 
 
     // setter functions
-    public void setId(int id)               {      this.mId = id;           }
-    public void setDate(String date)        {      this.mDate = date;       }
-    public void setName(String name)        {      this.mName = name;       }
-    public void setNote(String note)        {      this.mNote = note;       }
-    public void setRarity(String rarity)    {      this.mRarity = rarity;   }
+    public void setId(int id)                   {   this.mId = id;           }
+    public void setDate(String date)            {   this.mDate = date;       }
+    public void setName(String name)            {   this.mName = name;       }
+    public void setNote(String note)            {   this.mNote = note;       }
+    public void setRarity(String rarity)        {   this.mRarity = rarity;   }
+    //public void setLocation(LatLng location)    {   this.mLocation= location.toString();}
 
     /*
     @Override
