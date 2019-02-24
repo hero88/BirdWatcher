@@ -110,7 +110,7 @@ public class FormActivity extends AppCompatActivity
         }
     }
 
-    public void addListenerOnSpinnerItemSelection()
+    private void addListenerOnSpinnerItemSelection()
     {
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -137,7 +137,6 @@ public class FormActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 Double lat,lng;
-                DecimalFormat decimalFormat = new DecimalFormat("#.####");
 
                 if (ActivityCompat.checkSelfPermission(FormActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(FormActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
@@ -156,10 +155,8 @@ public class FormActivity extends AppCompatActivity
                 String rarity = String.valueOf(spinner1.getSelectedItem());
                 String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 
-                lat = location.getLatitude();
-                lat = Double.valueOf(decimalFormat.format(lat)); // format latitude to 4 decimal places
-                lng = location.getLongitude();
-                lng = Double.valueOf(decimalFormat.format(lng)); // format longitude to 4 decimal places
+                lat = formatValue(location.getLatitude());
+                lng = formatValue(location.getLongitude());
 
                 LatLng myPosition = new LatLng(lat,lng);
 
@@ -171,6 +168,7 @@ public class FormActivity extends AppCompatActivity
 
                 List<Bird> oldList = getData(getApplicationContext());
                 if (oldList == null) {
+                    oldList = new ArrayList<Bird>();
                     bird.setId(1);
                 }
                 else{
@@ -207,8 +205,14 @@ public class FormActivity extends AppCompatActivity
         });
     }
 
+    // function to format to 4 decimal places
+    private double formatValue(double val) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+        return Double.valueOf(decimalFormat.format(val));
+    }
 
-    public void saveData(Context context, List<Bird> list) {
+    // save data to sharedPref
+    private void saveData(Context context, List<Bird> list) {
         SharedPreferences settings;
         SharedPreferences.Editor editor;
         settings = context.getSharedPreferences(mySavings,
@@ -219,7 +223,8 @@ public class FormActivity extends AppCompatActivity
         editor.commit();
     }
 
-    public ArrayList<Bird> getData(Context context){
+    // load data from sharedPref
+    private ArrayList<Bird> getData(Context context){
         SharedPreferences settings;
         settings = context.getSharedPreferences(mySavings,Context.MODE_PRIVATE);
         List <Bird> birdLists;
@@ -232,7 +237,7 @@ public class FormActivity extends AppCompatActivity
             birdLists = new ArrayList<Bird>(birdLists);
         }
         else
-            return new ArrayList<Bird>();
+            return null;
         return (ArrayList<Bird>)birdLists;
     }
 }

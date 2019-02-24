@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // get saved Data
-    public ArrayList<Bird> getData(Context context){
+    private ArrayList<Bird> getData(Context context){
         SharedPreferences settings;
         settings = context.getSharedPreferences(mySavings,Context.MODE_PRIVATE);
         List<Bird> birdLists;
